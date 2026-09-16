@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#07141c"/>
+      <stop offset="1" stop-color="#0d2732"/>
+    </linearGradient>
+    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
+      <stop stop-color="#24c7b5"/>
+      <stop offset="1" stop-color="#e9b85f"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="640" rx="36" fill="url(#bg)"/>
+  <g opacity=".17" stroke="#8fb3b2">
+    <path d="M0 80H1280M0 160H1280M0 240H1280M0 320H1280M0 400H1280M0 480H1280M0 560H1280"/>
+    <path d="M80 0V640M160 0V640M240 0V640M320 0V640M400 0V640M480 0V640M560 0V640M640 0V640M720 0V640M800 0V640M880 0V640M960 0V640M1040 0V640M1120 0V640M1200 0V640"/>
+  </g>
+  <text x="88" y="150" fill="#e9b85f" font-family="Arial" font-size="18" font-weight="700" letter-spacing="4">INTERACTIVE IPv4 LAB</text>
+  <text x="88" y="235" fill="#f5f1df" font-family="Arial" font-size="72" font-weight="700">NetScope</text>
+  <text x="88" y="292" fill="#62e1d1" font-family="Arial" font-size="34">Network &amp; Subnet Visualizer</text>
+  <text x="88" y="355" fill="#91a8ae" font-family="Arial" font-size="24">CIDR · Binary · Subnet Splitting · VLSM</text>
+
+  <g transform="translate(860 320)">
+    <circle r="66" fill="#0d2732" stroke="#e9b85f" stroke-width="3"/>
+    <text text-anchor="middle" y="10" fill="#e9b85f" font-family="Arial" font-size="34" font-weight="700">R</text>
+    <g stroke="url(#line)" stroke-width="3" stroke-dasharray="9 9">
+      <path d="M-55 -35L-190 -120"/>
+      <path d="M55 -35L185 -120"/>
+      <path d="M58 36L190 118"/>
+      <path d="M-58 38L-190 122"/>
+    </g>
+    <g fill="#0d2732" stroke="#24c7b5" stroke-width="3">
+      <circle cx="-190" cy="-120" r="36"/>
+      <circle cx="185" cy="-120" r="36"/>
+      <circle cx="190" cy="118" r="36"/>
+      <circle cx="-190" cy="122" r="36"/>
+    </g>
+    <g fill="#f5f1df" font-family="Arial" font-size="16" font-weight="700" text-anchor="middle">
+      <text x="-190" y="-115">01</text>
+      <text x="185" y="-115">10</text>
+      <text x="190" y="123">11</text>
+      <text x="-190" y="127">00</text>
+    </g>
+  </g>
+
+  <rect x="88" y="430" width="520" height="74" rx="18" fill="#0d2732" stroke="#244551"/>
+  <text x="118" y="463" fill="#91a8ae" font-family="Arial" font-size="15">192.168.10.42 /24</text>
+  <rect x="118" y="479" width="370" height="9" rx="5" fill="#173d48"/>
+  <rect x="118" y="479" width="285" height="9" rx="5" fill="url(#line)"/>
+  <circle cx="403" cy="483.5" r="10" fill="#f5f1df"/>
+</svg>

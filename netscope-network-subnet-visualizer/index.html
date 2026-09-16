@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="description"
+    content="NetScope is an interactive IPv4 subnet calculator, binary visualizer, subnet splitter and VLSM planner built with vanilla JavaScript."
+  />
+  <meta name="theme-color" content="#07141c" />
+  <title>NetScope — Network & Subnet Visualizer</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="background-grid" aria-hidden="true"></div>
+  <div class="orb orb--one" aria-hidden="true"></div>
+  <div class="orb orb--two" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="NetScope home">
+      <span class="brand__mark" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </span>
+      <span>
+        <strong>NetScope</strong>
+        <small>Network & Subnet Visualizer</small>
+      </span>
+    </a>
+
+    <nav class="header-actions" aria-label="Page actions">
+      <button id="copy-link-button" class="button button--ghost button--small" type="button">
+        Copy share link
+      </button>
+      <button id="theme-toggle" class="icon-button" type="button" aria-label="Toggle color theme">
+        ◐
+      </button>
+    </nav>
+  </header>
+
+  <main id="top" class="page-shell">
+    <section class="hero">
+      <div class="hero__copy">
+        <p class="eyebrow">INTERACTIVE IPv4 LAB</p>
+        <h1>
+          See what a subnet
+          <span>actually contains.</span>
+        </h1>
+        <p>
+          Calculate IPv4 networks, inspect network and host bits, split CIDR blocks,
+          and build VLSM plans with deterministic, explainable calculations.
+        </p>
+        <div class="hero__badges" aria-label="Project capabilities">
+          <span>IPv4</span>
+          <span>CIDR</span>
+          <span>Binary</span>
+          <span>VLSM</span>
+          <span>Local only</span>
+        </div>
+      </div>
+
+      <div class="hero__visual" aria-hidden="true">
+        <div class="network-orbit">
+          <span class="node node--router">R</span>
+          <span class="node node--a">01</span>
+          <span class="node node--b">10</span>
+          <span class="node node--c">11</span>
+          <span class="node node--d">00</span>
+          <svg viewBox="0 0 340 240" role="presentation">
+            <path d="M170 120 L64 56 M170 120 L278 48 M170 120 L288 174 M170 120 L72 186" />
+            <circle cx="170" cy="120" r="82" />
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="calculator-card" aria-labelledby="calculator-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">SUBNET CALCULATOR</p>
+          <h2 id="calculator-title">Inspect an IPv4 address</h2>
+        </div>
+        <span id="validity-badge" class="status-badge">Ready</span>
+      </div>
+
+      <form id="subnet-form" class="subnet-form" novalidate>
+        <label class="field field--ip">
+          <span>IPv4 address</span>
+          <input
+            id="ip-input"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            spellcheck="false"
+            value="192.168.10.42"
+            aria-describedby="form-error"
+          />
+        </label>
+
+        <label class="field field--cidr">
+          <span>CIDR prefix</span>
+          <div class="cidr-input">
+            <span>/</span>
+            <input id="prefix-input" type="number" min="0" max="32" value="24" />
+          </div>
+        </label>
+
+        <button class="button button--primary" type="submit">
+          Analyze subnet
+        </button>
+      </form>
+
+      <div class="range-row">
+        <span>/0</span>
+        <input id="prefix-range" type="range" min="0" max="32" value="24" />
+        <span>/32</span>
+      </div>
+
+      <p id="form-error" class="form-error" role="alert" aria-live="polite"></p>
+    </section>
+
+    <section class="metrics-grid" aria-label="Subnet summary">
+      <article class="metric-card">
+        <span>Network</span>
+        <strong id="network-address">—</strong>
+        <button class="copy-value" data-copy-target="network-address" type="button">Copy</button>
+      </article>
+      <article class="metric-card">
+        <span>Broadcast</span>
+        <strong id="broadcast-address">—</strong>
+        <button class="copy-value" data-copy-target="broadcast-address" type="button">Copy</button>
+      </article>
+      <article class="metric-card">
+        <span>Usable host range</span>
+        <strong id="host-range">—</strong>
+        <button class="copy-value" data-copy-target="host-range" type="button">Copy</button>
+      </article>
+      <article class="metric-card">
+        <span>Usable addresses</span>
+        <strong id="usable-hosts">—</strong>
+        <small id="address-count-note">—</small>
+      </article>
+      <article class="metric-card">
+        <span>Subnet mask</span>
+        <strong id="subnet-mask">—</strong>
+        <button class="copy-value" data-copy-target="subnet-mask" type="button">Copy</button>
+      </article>
+      <article class="metric-card">
+        <span>Wildcard mask</span>
+        <strong id="wildcard-mask">—</strong>
+        <button class="copy-value" data-copy-target="wildcard-mask" type="button">Copy</button>
+      </article>
+      <article class="metric-card">
+        <span>Address scope</span>
+        <strong id="address-scope">—</strong>
+        <small id="legacy-class">—</small>
+      </article>
+      <article class="metric-card">
+        <span>Block size</span>
+        <strong id="block-size">—</strong>
+        <small id="prefix-label">—</small>
+      </article>
+    </section>
+
+    <section class="panel binary-panel" aria-labelledby="binary-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">BIT-LEVEL VIEW</p>
+          <h2 id="binary-title">Network bits vs. host bits</h2>
+        </div>
+        <div class="legend" aria-label="Binary legend">
+          <span><i class="legend__network"></i>Network</span>
+          <span><i class="legend__host"></i>Host</span>
+        </div>
+      </div>
+
+      <div class="binary-block">
+        <div id="binary-ip" class="binary-ip" aria-label="Binary IP address"></div>
+        <div class="binary-labels">
+          <span id="binary-network-label">Network bits: —</span>
+          <span id="binary-host-label">Host bits: —</span>
+        </div>
+      </div>
+
+      <div class="address-position">
+        <div class="address-position__header">
+          <span>Position inside subnet</span>
+          <strong id="position-percent">—</strong>
+        </div>
+        <div class="position-track">
+          <span class="position-marker" id="position-marker"></span>
+        </div>
+        <div class="position-labels">
+          <span id="position-network">Network</span>
+          <span id="position-current">Current IP</span>
+          <span id="position-broadcast">Broadcast</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="two-column">
+      <section class="panel" aria-labelledby="splitter-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">SUBNET SPLITTER</p>
+            <h2 id="splitter-title">Split the current network</h2>
+          </div>
+        </div>
+
+        <div class="split-controls">
+          <label class="field">
+            <span>New prefix</span>
+            <div class="cidr-input">
+              <span>/</span>
+              <input id="split-prefix" type="number" min="1" max="32" value="26" />
+            </div>
+          </label>
+          <button id="split-button" class="button button--secondary" type="button">Split network</button>
+        </div>
+
+        <p id="split-summary" class="supporting-text">Choose a longer prefix than the current network.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Subnet</th>
+                <th>Network</th>
+                <th>Host range</th>
+                <th>Broadcast</th>
+              </tr>
+            </thead>
+            <tbody id="split-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="cheatsheet-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">CIDR CHEAT SHEET</p>
+            <h2 id="cheatsheet-title">Nearby prefixes</h2>
+          </div>
+        </div>
+
+        <div id="cidr-cheatsheet" class="cheatsheet"></div>
+
+        <div class="note-card">
+          <strong>/31 and /32 note</strong>
+          <p>
+            NetScope treats /31 as two usable point-to-point addresses (RFC 3021)
+            and /32 as one host route. Traditional “network + broadcast” host counting
+            applies to /30 and shorter prefixes.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <section class="panel vlsm-panel" aria-labelledby="vlsm-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">VLSM PLANNER</p>
+          <h2 id="vlsm-title">Allocate networks by host demand</h2>
+        </div>
+        <span class="status-badge status-badge--muted">Largest first</span>
+      </div>
+
+      <div class="vlsm-grid">
+        <div>
+          <label class="field">
+            <span>Base network</span>
+            <input id="vlsm-base" type="text" value="10.20.0.0/22" />
+          </label>
+
+          <label class="field">
+            <span>Requirements — one per line</span>
+            <textarea
+              id="vlsm-requirements"
+              rows="9"
+              spellcheck="false"
+            >Main Office, 240
+Engineering Lab, 110
+Cameras, 50
+Guest Wi-Fi, 30
+Management, 12</textarea>
+          </label>
+
+          <button id="vlsm-button" class="button button--primary" type="button">
+            Build VLSM plan
+          </button>
+          <p id="vlsm-error" class="form-error" role="alert"></p>
+        </div>
+
+        <div>
+          <div id="vlsm-summary" class="vlsm-summary"></div>
+          <div class="table-wrap table-wrap--vlsm">
+            <table>
+              <thead>
+                <tr>
+                  <th>Segment</th>
+                  <th>Hosts</th>
+                  <th>CIDR</th>
+                  <th>Network</th>
+                  <th>Usable range</th>
+                  <th>Broadcast</th>
+                  <th>Waste</th>
+                </tr>
+              </thead>
+              <tbody id="vlsm-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel export-panel" aria-labelledby="export-title">
+      <div>
+        <p class="eyebrow">PORTFOLIO-FRIENDLY OUTPUT</p>
+        <h2 id="export-title">Keep the calculation reproducible</h2>
+        <p class="supporting-text">
+          Export the current subnet analysis as JSON or copy a shareable URL.
+          No data leaves your browser.
+        </p>
+      </div>
+      <div class="export-actions">
+        <button id="export-json-button" class="button button--secondary" type="button">
+          Export JSON
+        </button>
+        <button id="copy-summary-button" class="button button--ghost" type="button">
+          Copy summary
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>NetScope · Built with HTML, CSS and vanilla JavaScript</p>
+    <p>Educational tool — verify production network changes independently.</p>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="./network.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
